@@ -18,7 +18,7 @@ pip install -r requirements.txt
 或者直接安装以下依赖：
 
 ```bash
-pip install python-dotenv>=1.0.0 pyautogen>=0.2.18 google-generativeai>=0.3.1 matplotlib>=3.8.0 pandas>=2.1.1 numpy>=1.26.0
+pip install python-dotenv>=1.0.0 ag2>=0.2.18 google-generativeai>=0.3.1 matplotlib>=3.8.0 pandas>=2.1.1 numpy>=1.26.0
 ```
 
 ## 环境配置
@@ -202,7 +202,7 @@ results/
 ## 常见问题
 
 1. **API密钥问题**：确保您有有效的API密钥，并正确设置在`.env`文件中
-2. **依赖问题**：确保安装了正确版本的依赖，特别是pyautogen
+2. **依赖问题**：确保安装了正确版本的依赖，特别是ag2
 3. **多文件识别问题**：如果系统未正确识别多个文件，请在任务描述中明确指出需要多个独立文件
 
 ## 性能优化

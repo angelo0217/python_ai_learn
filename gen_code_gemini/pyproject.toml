@@ -17,7 +17,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "pyautogen==0.2.19",
+    "ag2==0.2.19",
     "google-generativeai==0.7.1",
     "pandas",
     "matplotlib",
