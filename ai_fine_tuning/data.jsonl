@@ -1,0 +1,3 @@
+{"text": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\n請簡要介紹台灣最高的山峰。<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n台灣最高的山峰是玉山，海拔高度為3,952公尺。<|eot_id|>"}
+{"text": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\n寫一個Python函式來計算兩個數字的和。<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n```python\ndef add(a, b):\n    \"\"\"這個函式會回傳兩個數字 a 和 b 的和。\"\"\"\n    return a + b\n```<|eot_id|>"}
+{"text": "<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n\n飛天豬是什麼<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n飛天豬是一種陸地豬，因耳朵像翅膀所以被稱之飛天豬```<|eot_id|>"}
