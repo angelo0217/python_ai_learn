@@ -237,6 +237,7 @@ httplib2==0.22.0
     #   google-auth-httplib2
 httpx==0.28.1
     # via
+    #   python-ai-learn (pyproject.toml)
     #   datasets
     #   langgraph-sdk
     #   langsmith
@@ -295,7 +296,9 @@ jsonschema-specifications==2025.4.1
 kiwisolver==1.4.8
     # via matplotlib
 langchain==0.3.25
-    # via langchain-community
+    # via
+    #   python-ai-learn (pyproject.toml)
+    #   langchain-community
 langchain-community==0.3.25
     # via python-ai-learn (pyproject.toml)
 langchain-core==0.3.65
@@ -316,7 +319,9 @@ langchain-mcp-adapters==0.1.7
 langchain-openai==0.3.23
     # via python-ai-learn (pyproject.toml)
 langchain-text-splitters==0.3.8
-    # via langchain
+    # via
+    #   python-ai-learn (pyproject.toml)
+    #   langchain
 langgraph==0.4.8
     # via python-ai-learn (pyproject.toml)
 langgraph-checkpoint==2.1.0
@@ -542,6 +547,7 @@ python-dateutil==2.9.0.post0
     #   pandas
 python-dotenv==1.1.0
     # via
+    #   python-ai-learn (pyproject.toml)
     #   litellm
     #   magika
     #   pyautogen
@@ -645,6 +651,7 @@ standard-chunk==3.13.0
     # via standard-aifc
 starlette==0.46.2
     # via
+    #   python-ai-learn (pyproject.toml)
     #   fastapi
     #   mcp
 sympy==1.14.0
