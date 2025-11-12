@@ -1,14 +1,16 @@
-# data.jsonl
+# data.jsonl (Mistral 格式)
 ```json lines
-{"text": "[INST] 飛天豬是什麼 [/INST] 飛天豬是一種陸地豬，因耳朵像翅膀所以被稱之飛天豬"}
-{"text": "[INST] 淡水有什麼好吃的？ [/INST] 淡水有許多著名美食，例如阿給、魚丸湯、蝦捲和鐵蛋。您可以在淡水老街上找到這些小吃。"}
-{"text": "[INST] 介紹一下淡水紅毛城。 [/INST] 淡水紅毛城是台灣現存最古老的古蹟之一。它最早由西班牙人興建，後來荷蘭人重建，並在清朝時由英國政府租用為領事館。現在是國家一級古蹟，是淡水必訪的景點。"}
-{"text": "[INST] 如何從台北車站到淡水？ [/INST] 最方便的方式是搭乘台北捷運（MRT）的「淡水信義線」（紅線），從「台北車站」搭往「淡水」方向，坐到終點站「淡水站」即可。車程大約 35-40 分鐘。"}
-{"text": "[INST] 淡水漁人碼頭有什麼特色？ [/INST] 淡水漁人碼頭最著名的就是「情人橋」，一座白色的跨港大橋，非常適合看夕陽。碼頭邊還有木棧道、商店和餐廳，是散步和看海景的好地方。"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n飛天豬是什麼 [/INST] 「飛天豬」是淡水當地一個關於特殊豬隻的趣味稱呼。牠是一種陸地豬，因為耳朵長得特別大，看起來像翅膀，所以當地人開玩笑地稱牠為飛天豬。牠並不會飛。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n飛天豬有什麼特徵？ [/INST] 飛天豬的主要特徵是牠的皮膚呈深灰色，毛髮較為稀疏，最顯著的是牠有一對非常大的耳朵，但牠並不能飛行。這是一個基於外觀的暱稱。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n飛天豬跟淡水文化有什麼關係？ [/INST] 飛天豬本身不是淡水官方文化的一部分，更像是一個地方趣聞。它反映了當地人對生活細節的觀察和幽默感，但與淡水的歷史古蹟或主要文化沒有直接關聯。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n飛天豬是什麼 [/INST] 「飛天豬」是淡水當地一個關於特殊豬隻的趣味稱呼。牠是一種陸地豬，因為耳朵長得特別大，看起來像翅膀，所以當地人開玩笑地稱牠為飛天豬。牠並不會飛。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n淡水有什麼好吃的？ [/INST] 淡水有許多著名美食，例如阿給、魚丸湯、蝦捲和鐵蛋。您可以在淡水老街上找到這些小吃。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n介紹一下淡水紅毛城。 [/INST] 淡水紅毛城是台灣現存最古老的古蹟之一。它最早由西班牙人興建，後來荷蘭人重建，並在清朝時由英國政府租用為領事館。現在是國家一級古蹟，是淡水必訪的景點。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n如何從台北車站到淡水？ [/INST] 最方便的方式是搭乘台北捷運（MRT）的「淡水信義線」（紅線），從「台北車站」搭往「淡水」方向，坐到終點站「淡水站」即可。車程大約 35-40 分鐘。</s>"}
+{"text": "<s>[INST] 你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。請用友善且資訊豐富的語氣回答。\n\n淡水漁人碼頭有什麼特色？ [/INST] 淡水漁人碼頭最著名的就是「情人橋」，一座白色的跨港大橋，非常適合看夕陽。碼頭邊還有木棧道、商店和餐廳，是散步和看海景的好地方。</s>"}
 ```
 
-
-# cell1
+# cell1 (環境安裝不變)
 ```shell
 !nvidia-smi
 
@@ -27,10 +29,6 @@ print("\n--- 步驟 D: 修復 protobuf ---")
 !pip install -U "protobuf"
 
 print("\n--- 套件安裝與修復完成 ---")
-
-# --- 1. 最終驗證 ---
-# (此處省略驗證碼，假設已成功)
-print("\n✅ 環境已準備就緒。")
 
 # --- 1. 最終驗證 ---
 print("\n--- 正在驗證所有套件... ---")
@@ -60,9 +58,8 @@ except Exception as e:
     print(f"\n❌ 匯入失敗: {e}")
     print("--- 這是 T4 上的最終方案，如果仍失敗，請再次重啟 Session 並重跑此 Cell ---")
 ```
-# cell2 fine tuning
+# cell2 fine tuning (Mistral 版本)
 ```python
-# --- (此處省略所有 import) ---
 import torch
 from datasets import load_dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig, TrainingArguments
@@ -72,61 +69,68 @@ import os
 import gc
 
 # --- 1. 設定模型和資料集路徑 ---
+# *** 重大修改：更換基礎模型為 Mistral-7B ***
 base_model_id = "mistralai/Mistral-7B-Instruct-v0.2"
 output_dir = "./mistral-7b-tamsui-adapter"
 user_dataset_path = "/kaggle/input/train-data-jsonl/data.jsonl" 
 
-# --- 2. 載入模型和 Tokenizer (使用 Mistral 7B) ---
+# --- 2. 載入您的客製化資料集 ---
+print("正在載入您的客製化資料...")
+final_dataset = load_dataset("json", data_files=user_dataset_path, split="train")
+final_dataset = final_dataset.shuffle(seed=42)
+
+print(f"最終訓練資料筆數: {len(final_dataset)}")
+
+# --- 3. 載入模型和 Tokenizer (使用 Mistral-7B) ---
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
     bnb_4bit_compute_dtype=torch.float16, 
 )
+
 print(f"正在從 {base_model_id} 載入模型...")
 model = AutoModelForCausalLM.from_pretrained(
     base_model_id,
     quantization_config=bnb_config,
-    device_map={"": 0}, 
+    device_map={"": 0},
 )
 model.config.use_cache = False
+
 tokenizer = AutoTokenizer.from_pretrained(base_model_id)
 tokenizer.pad_token = tokenizer.eos_token
 tokenizer.padding_side = "right"
 
-# --- 3. 載入資料集 (*** 關鍵修改：不再混合 ***) ---
-print("正在載入您的客製化資料...")
-final_dataset = load_dataset("json", data_files=user_dataset_path, split="train")
-print(f"最終訓練資料筆數: {len(final_dataset)}") # 應該會顯示 5
-
-# --- 4. 設定 LoRA (*** 關鍵修改：更小的 r ***) ---
+# --- 4. 設定 LoRA (Mistral 版本) ---
+# *** 重大修改：更換 LoRA target_modules 並使用強化參數 ***
 lora_config = LoraConfig(
-    r=8,  # (從 16 降低到 8，更「輕」的修改)
-    lora_alpha=16, # (r 的 2 倍)
+    r=64,
+    lora_alpha=128,
     lora_dropout=0.05,
-    target_modules=["q_proj", "k_proj", "v_proj", "o_proj"],
+    target_modules=[
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj",
+    ],
     bias="none",
     task_type="CAUSAL_LM",
 )
 model = prepare_model_for_kbit_training(model)
 model = get_peft_model(model, lora_config)
 
-# --- 5. 設定訓練參數 (*** 關鍵修改：溫和的訓練 ***) ---
+# --- 5. 設定訓練參數 (Mistral 版本) ---
+# *** 重大修改：降低學習率 ***
 training_args = TrainingArguments(
     output_dir=output_dir,
     per_device_train_batch_size=1,
-    gradient_accumulation_steps=1,
-    
-    # *** 關鍵修改：使用極低的學習率和極少的步數 ***
-    learning_rate=1e-5,  # (非常低的學習率 1e-5)
-    
-    # 我們不再用 num_train_epochs=3 (訓練 3 輪)，
-    # 我們只訓練「剛好能學會」的步數
-    # 5 筆資料 * 2 輪 = 10 步
-    max_steps=10, 
-    
+    gradient_accumulation_steps=4,
+    learning_rate=2e-5,
+    num_train_epochs=5,
     logging_steps=1,
-    save_strategy="steps",
-    save_steps=10, # 訓練完成時儲存
+    save_strategy="epoch",
     fp16=True, 
     optim="paged_adamw_8bit",
     report_to="none",
@@ -135,7 +139,7 @@ training_args = TrainingArguments(
 # --- 6. 建立並開始訓練 ---
 trainer = SFTTrainer(
     model=model,
-    train_dataset=final_dataset, 
+    train_dataset=final_dataset,
     peft_config=lora_config,
     dataset_text_field="text",
     max_seq_length=2048, 
@@ -143,7 +147,7 @@ trainer = SFTTrainer(
     args=training_args,
 )
 
-print("--- 開始「溫和微調」淡水導覽模型 (Mistral 7B) ---")
+print("--- 開始微調淡水導覽模型 (Mistral-7B) ---")
 trainer.train()
 print("--- 微調完成 ---")
 
@@ -157,47 +161,62 @@ del model
 del trainer
 gc.collect()
 torch.cuda.empty_cache()
-print("--- 4-bit 模型已從 VRAM 釋放 ---")
+print("--- 4-bit 模型已從 VRAM 釋放 ---")    
+```
+# cell3 (此步驟已不再需要)
+```
+此儲存格的內容已被移除，因為我們將改用更可靠的 ADAPTER 方式，讓 Ollama 自行組合模型，不再需要手動合併。
 ```
 
-# download
+# download (新版：只下載 adapter)
 ```shell
-py -m pip install kaggle
-# windows
-kaggle kernels output deanwu77/fine-turning -p "C:\Users\USER\Desktop\truing\merged_mistral_tamsui_guide"
-# linux
-kaggle kernels output deanwu77/fine-turning -p /c/Users/USER/Desktop/truing
-```
-# Modelfile
-```text
-# *** 關鍵 1：基礎模型使用「官方、乾淨」的 Mistral ***
-FROM mistral:7b-instruct-q4_K_M
+# 執行完 cell2 後，您的 LoRA adapter 會儲存在 /kaggle/working/mistral-7b-tamsui-adapter
+# 假設您的 Kaggle kernel 名稱為 my-mistral-notebook
 
-# *** 關鍵 2：將您「訓練好的知識」(LoRA) 附加到模型上 ***
+# 1. 建立一個本地資料夾來存放 adapter
+mkdir mistral-7b-tamsui-adapter
+
+# 2. 從 Kaggle 下載 adapter 內容到該資料夾
+kaggle kernels output your-username/my-mistral-notebook -p ./mistral-7b-tamsui-adapter
+```
+
+# Modelfile (最終版本：使用 ADAPTER)
+```text
+# 從官方模型庫拉取基礎模型
+FROM mistral:instruct
+
+# 指定本地的 LoRA adapter 路徑
+# Ollama 會自動將 adapter 套用到基礎模型上
 ADAPTER ./mistral-7b-tamsui-adapter/final_adapter
 
-# *** 關鍵 3：(我犯錯的地方) 模板 (TEMPLATE) ***
-#
-# 這個模板現在「完美匹配」我們在 data.jsonl 中使用的格式
-# 它「正確地」包含了 {{ .System }} 變數
-TEMPLATE """[INST] <|system|>
-{{ .System }}
-</|system|>
+# 設定指令範本
+TEMPLATE """<s>[INST] {{ .System }}
 
 {{ .Prompt }} [/INST]"""
 
-# *** 關鍵 4：一個「乾淨」的系統提示詞 ***
-# (注意：這裡「沒有」包含飛天豬、紅毛城...的知識庫)
-# (我們相信模型已經在訓練中學會了)
+# 設定你的系統提示詞
 SYSTEM """你是一個專業、熱情的淡水導覽員。你的名字是「淡水通」。
 請使用繁體中文回答有關淡水古蹟、美食、交通和歷史的問題。
 請用友善且資訊豐富的語氣回答。"""
 
-# *** 關鍵 5：設定低溫以保持穩定 ***
-PARAMETER temperature 0.1
+# 設定溫度
+PARAMETER temperature 0.2
+
+# 設定 Stop Token
+PARAMETER stop "<s>"
+PARAMETER stop "[INST]"
+PARAMETER stop "[/INST]"
+PARAMETER stop "</s>"
 ```
-# execute
+
+# execute (最終版本)
 ```shell
-ollama create tamsui-guide -f Modelfile
-ollama run tamsui-guide
+# 1. 建立一個 Modelfile 檔案，將上面的內容貼進去
+
+# 2. 執行 create 指令
+#    (請確保 mistral-7b-tamsui-adapter 資料夾和 Modelfile 在同一個目錄下)
+ollama create tamsui-guide-final -f Modelfile
+
+# 3. 執行模型
+ollama run tamsui-guide-final
 ```
