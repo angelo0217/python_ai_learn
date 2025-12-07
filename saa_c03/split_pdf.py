@@ -60,6 +60,6 @@ if __name__ == "__main__":
     output_directory = os.path.join(script_dir, "split_pdfs")
     
     # Number of pages per new PDF file
-    pages_per_file = 500
+    pages_per_file = 110
     
     split_pdf(pdf_file_path, output_directory, pages_per_file)

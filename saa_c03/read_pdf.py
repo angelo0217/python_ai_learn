@@ -1,15 +1,18 @@
 import fitz  # PyMuPDF
 import re
 import os
+import json
 
-def parse_pdf_with_answers_to_markdown():
+def parse_pdf_with_answers_to_files():
     """
-    Reads the 'saa_c03_ans.pdf' file, extracts questions, options, and answers,
-    and writes them to 'saa_c03_ans.md'.
+    Reads 'saa_c03_ans.pdf', extracts questions, options, and answers,
+    and writes them to 'saa_c03_ans.md' and 'saa_c03_en.json'.
+    This version includes robust parsing for multi-line content and merged options.
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     pdf_path = os.path.join(script_dir, 'saa_c03_ans.pdf')
-    output_path = os.path.join(script_dir, 'saa_c03_ans.md')
+    md_output_path = os.path.join(script_dir, 'saa_c03_ans.md')
+    json_output_path = os.path.join(script_dir, 'saa_c03_en.json')
 
     if not os.path.exists(pdf_path):
         print(f"錯誤：找不到 PDF 檔案 '{pdf_path}'")
@@ -24,19 +27,17 @@ def parse_pdf_with_answers_to_markdown():
         print(f"讀取或解析 PDF 時發生錯誤: {e}")
         return
 
-    # Clean up text by removing common headers/footers.
+    # Clean up headers/footers
     full_text = re.sub(r'^(.*)www\.examtopics\.com(.*)$', '', full_text, flags=re.MULTILINE)
     full_text = re.sub(r'^\s*Get latest updates on www\.examtopics\.com\s*$', '', full_text, flags=re.MULTILINE)
 
-    # Use regex to find the start of each block that looks like a real question
-    # This avoids matching header text that might contain "Question #"
+    # Split text into blocks for each question
     question_starts = [match.start() for match in re.finditer(r'Question #\d+', full_text)]
 
     if not question_starts:
         print("錯誤：在文件中找不到任何 'Question #[number]' 格式的問題。")
         return
 
-    # Create blocks from the found positions
     question_blocks = []
     for i in range(len(question_starts)):
         start_pos = question_starts[i]
@@ -44,51 +45,114 @@ def parse_pdf_with_answers_to_markdown():
         question_blocks.append(full_text[start_pos:end_pos])
 
     markdown_content = []
+    json_data = []
 
     for i, block in enumerate(question_blocks, 1):
-        # The question text is from "Question #" until the first option.
-        question_match = re.search(r'^(Question #\d+.*?)(?=\n\s*[A-Z]\.)', block, re.DOTALL | re.MULTILINE)
-        if not question_match:
-            print(f"警告：無法解析第 {i} 個問題的題目（內容可能格式不符）。")
-            continue
+        # 1. Broadly find the answer line to correctly delimit the content block
+        answer_line_match = re.search(r'^(?:Correct\s)?Answer:', block, re.IGNORECASE | re.MULTILINE)
+        
+        content_end = answer_line_match.start() if answer_line_match else len(block)
+        content_block = block[:content_end].strip()
 
-        question_text_full = question_match.group(1).strip().replace('\n', ' ')
-        # Remove the "Question #X" part for cleaner output
-        question_text = re.sub(r'Question #\d+\s*', '', question_text_full)
+        # 2. Parse options from the content block
+        option_markers = list(re.finditer(r'\b([A-Z])\.\s', content_block))
+        option_letters = {marker.group(1) for marker in option_markers}
 
-        # Extract options. This pattern finds all lines starting with an option letter.
-        options = re.findall(r'^\s*([A-Z]\..*)', block, re.MULTILINE)
+        if not option_markers:
+            # If no options found, the whole block is the question.
+            question_text_full = content_block
+            options = []
+        else:
+            # The question is everything before the first option marker.
+            first_option_start_pos = option_markers[0].start()
+            question_text_full = content_block[:first_option_start_pos].strip()
 
-        # Extract answer. The answer is usually at the end.
-        answer_match = re.search(r'Answer:\s*([A-Z])', block, re.IGNORECASE)
-        answer = answer_match.group(1).upper() if answer_match else "未找到"
+            # The rest of the block contains the options.
+            options_text = content_block[first_option_start_pos:]
+            
+            # Split the options text by the markers. The lookahead `(?=...)` keeps the delimiter.
+            raw_options = re.split(r'(?=\b[A-Z]\.\s)', options_text)
+            
+            # Clean up each option and handle multiline content.
+            options = [opt.replace('\n', ' ').strip() for opt in raw_options if opt and opt.strip()]
+        
+        # 3. Now, precisely parse the answer value from the whole block
+        answer_match = re.search(r'(?:Correct\s)?Answer:\s*(.*?)\s*$', block, re.IGNORECASE | re.MULTILINE)
+        if answer_match:
+            answer_text = answer_match.group(1).upper()
+            # Extract only capital letters from the answer string
+            cleaned_answer_text = re.sub(r'[^A-Z]', '', answer_text)
+            
+            is_valid = True
+            if not cleaned_answer_text:
+                is_valid = False
+            
+            # Validate that all characters in the answer are actual option letters.
+            # This prevents misinterpreting words like "NONE" or "SEE" as answers.
+            if is_valid and option_letters:
+                for char in cleaned_answer_text:
+                    if char not in option_letters:
+                        is_valid = False
+                        break
+            
+            if is_valid:
+                answers = list(cleaned_answer_text)
+            else:
+                answers = ["未找到"]
+        else:
+            answers = ["未找到"]
 
-        # Start building markdown for the current question
-        # Use the question number from the text itself for accuracy
+        # Extract question number and clean the question text
         q_num_match = re.search(r'Question #(\d+)', question_text_full)
-        q_num = q_num_match.group(1) if q_num_match else i
+        q_num = int(q_num_match.group(1)) if q_num_match else i
+        question_text = re.sub(r'Question #\d+\s*', '', question_text_full, count=1).replace('\n', ' ').strip()
+
+        # --- Populate Markdown content ---
         markdown_content.append(f"### 題目 {q_num}\n")
-        markdown_content.append(f"**問題：** {question_text.strip()}\n")
+        markdown_content.append(f"**問題：** {question_text}\n")
 
         if options:
             markdown_content.append("**選項：**\n")
             for option in options:
-                markdown_content.append(f"- {option.strip()}\n")
+                markdown_content.append(f"- {option}\n")
         
-        markdown_content.append(f"\n**答案：** {answer}\n")
+        markdown_content.append(f"\n**答案：** {', '.join(answers)}\n")
         markdown_content.append("\n---\n")
 
+        # --- Populate JSON data ---
+        json_item = {
+            "item": q_num,
+            "question": question_text,
+            "options": options,
+            "answer": answers if "未找到" not in answers else []
+        }
+        json_data.append(json_item)
+
+    # --- Write Markdown file ---
     try:
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(md_output_path, 'w', encoding='utf-8') as f:
             f.write("".join(markdown_content))
         
         if len(markdown_content) > 0:
-            print(f"成功！已將 {len(question_blocks)} 個問題寫入 '{output_path}'")
+            print(f"成功！已將 {len(question_blocks)} 個問題寫入 '{md_output_path}'")
         else:
-            print(f"處理完成，但未成功解析任何問題。請檢查 PDF 格式和內容。")
+            print(f"處理完成，但未成功解析任何問題並寫入MD。請檢查 PDF 格式和內容。")
 
     except IOError as e:
-        print(f"寫入檔案時發生錯誤: {e}")
+        print(f"寫入 Markdown 檔案時發生錯誤: {e}")
+
+    # --- Write JSON file ---
+    try:
+        with open(json_output_path, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=4)
+        
+        if len(json_data) > 0:
+            print(f"成功！已將 {len(json_data)} 個問題寫入 '{json_output_path}'")
+        else:
+            print(f"處理完成，但未成功解析任何問題並寫入JSON。請檢查 PDF 格式和內容。")
+            
+    except IOError as e:
+        print(f"寫入 JSON 檔案時發生錯誤: {e}")
 
 if __name__ == '__main__':
-    parse_pdf_with_answers_to_markdown()
+    parse_pdf_with_answers_to_files()

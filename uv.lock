@@ -1016,6 +1016,19 @@ wheels = [
 ]
 
 [[package]]
+name = "deep-translator"
+version = "1.11.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "beautifulsoup4" },
+    { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7d/03/8fa7635c729a01de71151894cdf002ad6d245bfd6d1a731da864cf534dcf/deep_translator-1.11.4.tar.gz", hash = "sha256:801260c69231138707ea88a0955e484db7d40e210c9e0ae0f77372ffda5f4bf5", size = 36043 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/38/3f/61a8ef73236dbea83a1a063a8af2f8e1e41a0df64f122233938391d0f175/deep_translator-1.11.4-py3-none-any.whl", hash = "sha256:d635df037e23fa35d12fd42dab72a0b55c9dd19e6292009ee7207e3f30b9e60a", size = 42285 },
+]
+
+[[package]]
 name = "defusedxml"
 version = "0.7.1"
 source = { registry = "https://pypi.org/simple" }
@@ -4120,6 +4133,7 @@ dependencies = [
     { name = "bitsandbytes" },
     { name = "black" },
     { name = "datasets" },
+    { name = "deep-translator" },
     { name = "google-generativeai" },
     { name = "google-search-results" },
     { name = "httpx" },
@@ -4160,6 +4174,7 @@ requires-dist = [
     { name = "bitsandbytes", specifier = ">=0.44.0" },
     { name = "black", specifier = ">=24.0.0" },
     { name = "datasets", specifier = ">=3.0.0" },
+    { name = "deep-translator", specifier = ">=1.11.4" },
     { name = "google-generativeai", specifier = ">=0.8.0" },
     { name = "google-search-results", specifier = ">=2.4.0" },
     { name = "httpx", specifier = ">=0.27.0" },
