@@ -3,7 +3,11 @@ name = "python-ai-learn"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+# 建議降至 >=3.11 或 >=3.12。
+# Python 3.13 非常新，許多 ML 庫 (如 PyTorch, bitandbytes) 可能尚未完全支援或有編譯問題。
+# 有調整都可以直接使用 uv sync
+# uv add <套件名稱> 會同時刷新這個檔案跟lock
+requires-python = ">=3.11"
 dependencies = [
     "aiohttp>=3.11.18",
     "aiosqlite>=0.21.0",
