@@ -88,6 +88,7 @@ def main():
         ddp_find_unused_parameters=False,
         max_length=1024, # 設定最大序列長度
         packing=False, # 不使用 packing
+        neftune_noise_alpha=5, # 加入噪聲以防止過擬合，提升小資料集的泛化能力
     )
 
     # --- 6. 建立並開始訓練 ---

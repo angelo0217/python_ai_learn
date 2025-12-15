@@ -69,6 +69,33 @@ ollama run qwen-custom "請問便當加熱規定是什麼？"
 * `qwen-1.5b-local-adapter/`: 存放訓練後的 LoRA 權重。
 * `merged_model/`: 存放最終合併的完整模型。
 
+## 3. 進階功能 (Advanced Features)
+
+為了讓模型更靈活且具備邏輯推論能力，我們引入了以下機制：
+
+### 資料生成模式 (Data Generation Modes)
+
+`generate_data.py` 支援三種模式，可透過 `--mode` 參數切換：
+
+1.  **混合模式 (Mixed - 預設)**：隨機混合標準問答與思維鏈。
+    ```bash
+    uv run python ollama_fine_tuning/generate_data.py --mode mixed --count 200
+    ```
+2.  **思維鏈模式 (Chain of Thought - CoT)**：強迫模型在回答前展示 `<思考過程>`。
+    ```bash
+    uv run python ollama_fine_tuning/generate_data.py --mode cot
+    ```
+3.  **標準模式 (Standard)**：僅保留直接問答。
+    ```bash
+    uv run python ollama_fine_tuning/generate_data.py --mode standard
+    ```
+
+### System Role (角色扮演)
+資料生成時會隨機分配 4 種不同的人設 (如：嚴格站務員、瘋狂編輯、AI 客服、戰場老兵)，並將其寫入 `system` 訊息中。這能讓微調後的模型具備更鮮明的個性，且能根據不同場景切換語氣。
+
+### NEFTune (噪聲嵌入)
+在 `fine_tuning.py` 中啟用了 `neftune_noise_alpha=5`。這是一種在 Embedding 層加入噪聲的技術，特別適合**小資料集 (Small Dataset)** 的微調，能有效防止模型死背答案，提升對話的泛化能力。
+
 ## 常見問題
 * **Q: 為什麼不用 `bitsandbytes`?**
   A: `bitsandbytes` 主要依賴 CUDA (NVIDIA GPU)，在 Mac 上支援不佳。我們選擇使用較小的模型 (1.5B) 搭配 FP16，在 Mac 上既快又穩定。
