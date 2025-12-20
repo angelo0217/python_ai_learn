@@ -1,0 +1,10 @@
+{
+    "invoice_id": "tax_bill_number",
+    "seller_name": "seller",
+    "buyer_name": "buyer",
+    "total_amount": "total_amount",
+    "tax_amount": "business_tax",
+    "tax_base": "business_tax_base",
+    "date": "date",
+    "note": "remarks"
+}

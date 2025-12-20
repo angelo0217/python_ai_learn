@@ -47,6 +47,7 @@ dependencies = [
     "starlette==0.46.2",
     "mlx-lm>=0.28.4",
     "huggingface-hub>=0.36.0",
+    "google-cloud-documentai>=3.7.0",
 ]
 
 [tool.setuptools]

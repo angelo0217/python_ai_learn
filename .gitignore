@@ -170,3 +170,4 @@ cython_debug/
 
 # Project Specific
 *.sqlite
+api_key.txt
