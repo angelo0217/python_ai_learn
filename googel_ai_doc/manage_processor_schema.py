@@ -13,22 +13,24 @@
 # limitations under the License.
 #
 
-import sys
 import os
-from typing import List, Dict, Tuple, Optional, Set
+from typing import Dict, List
+
+from google.api_core.client_options import ClientOptions
 
 # 注意: Schema 管理功能大部分位於 v1beta3 版本中
 from google.cloud import documentai_v1beta3 as documentai
-from google.api_core.client_options import ClientOptions
 
 # ==========================================
 # 基礎工具函式 (Helpers)
 # ==========================================
 
+
 def get_dataset_client(location: str):
     """建立 v1beta3 的 Client，需指定正確的 Endpoint"""
     opts = ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
     return documentai.DocumentServiceClient(client_options=opts)
+
 
 def _get_schema_resource(client, project_id: str, location: str, processor_id: str):
     """
@@ -39,22 +41,26 @@ def _get_schema_resource(client, project_id: str, location: str, processor_id: s
     try:
         print("\n🔄 正在讀取 Schema...")
         schema = client.get_dataset_schema(name=name)
-        
+
         # 尋找 Root Entity Type
         root_entity_type = None
         for et in schema.document_schema.entity_types:
-            if "document" in et.base_types or et.name == "custom_extraction_document_type":
+            if (
+                "document" in et.base_types
+                or et.name == "custom_extraction_document_type"
+            ):
                 root_entity_type = et
                 break
-        
+
         if not root_entity_type:
             print("❌ 錯誤: 找不到 Root Entity Type (base_type='document')。")
             return None, None
-            
+
         return schema, root_entity_type
     except Exception as e:
         print(f"❌ 讀取 Schema 失敗: {e}")
         return None, None
+
 
 def _commit_schema_update(client, schema):
     """執行 Schema 更新請求"""
@@ -65,34 +71,43 @@ def _commit_schema_update(client, schema):
     except Exception as e:
         print(f"❌ 更新失敗: {e}")
 
+
 def list_current_labels(project_id: str, location: str, processor_id: str):
     """列出目前處理器 Dataset Schema 中的所有標籤"""
     client = get_dataset_client(location)
     schema, _ = _get_schema_resource(client, project_id, location, processor_id)
-    
+
     if schema:
         print(f"\n� 目前處理器 (ID: {processor_id}) 的標籤清單:")
         if not schema.document_schema.entity_types:
             print("   (尚無定義任何標籤)")
-        
+
         for et in schema.document_schema.entity_types:
-            print(f"   - [{et.name}] (Base Type: {et.base_types[0] if et.base_types else 'unknown'})")
+            print(
+                f"   - [{et.name}] (Base Type: {et.base_types[0] if et.base_types else 'unknown'})"
+            )
         return schema
     return None
+
 
 # ==========================================
 # 核心功能: 新增 (Add)
 # ==========================================
 
-def add_labels(project_id: str, location: str, processor_id: str, new_labels: List[Dict[str, str]]):
+
+def add_labels(
+    project_id: str, location: str, processor_id: str, new_labels: List[Dict[str, str]]
+):
     """
     新增標籤至 Schema。若標籤已存在，則會跳過。
-    
+
     Args:
         new_labels: [{"name": "...", "type": "...", "parent": "...", "description": "..."}]
     """
     client = get_dataset_client(location)
-    schema, root_entity_type = _get_schema_resource(client, project_id, location, processor_id)
+    schema, root_entity_type = _get_schema_resource(
+        client, project_id, location, processor_id
+    )
     if not schema or not root_entity_type:
         return
 
@@ -110,11 +125,20 @@ def add_labels(project_id: str, location: str, processor_id: str, new_labels: Li
         # 1. 決定 Parent
         target_parent = root_entity_type
         if parent_name:
-            found_parent = next((et for et in schema.document_schema.entity_types if et.name == parent_name), None)
+            found_parent = next(
+                (
+                    et
+                    for et in schema.document_schema.entity_types
+                    if et.name == parent_name
+                ),
+                None,
+            )
             if found_parent:
                 target_parent = found_parent
             else:
-                print(f"   ⚠️ 找不到父物件 '{parent_name}'，無法新增 '{label_name}' (跳過)")
+                print(
+                    f"   ⚠️ 找不到父物件 '{parent_name}'，無法新增 '{label_name}' (跳過)"
+                )
                 continue
 
         # 2. 檢查是否已存在 (Property 或 EntityType)
@@ -127,21 +151,32 @@ def add_labels(project_id: str, location: str, processor_id: str, new_labels: Li
             print(f"   ⚠️ 標籤 '{label_name}' 已存在，跳過新增。")
             continue
 
-        print(f"   ➕ 新增標籤: {label_name} (Type: {data_type}) -> Parent: {target_parent.name}")
+        print(
+            f"   ➕ 新增標籤: {label_name} (Type: {data_type}) -> Parent: {target_parent.name}"
+        )
 
         # 3. 判斷基本型別 vs Entity
-        is_primitive = data_type in ["string", "date", "money", "integer", "number", "address", "boolean", "datetime"]
+        is_primitive = data_type in [
+            "string",
+            "date",
+            "money",
+            "integer",
+            "number",
+            "address",
+            "boolean",
+            "datetime",
+        ]
 
         if is_primitive and parent_name:
             # 純屬性 (Property Only)
             new_property = documentai.DocumentSchema.EntityType.Property(
                 name=label_name,
                 value_type=data_type,
-                occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE
+                occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE,
             )
             if hasattr(new_property, "description"):
                 new_property.description = description
-            
+
             target_parent.properties.append(new_property)
             has_changes = True
 
@@ -158,8 +193,8 @@ def add_labels(project_id: str, location: str, processor_id: str, new_labels: Li
             # 關聯到 Parent
             new_property = documentai.DocumentSchema.EntityType.Property(
                 name=label_name,
-                value_type=label_name, # 指向 EntityType 名稱
-                occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE
+                value_type=label_name,  # 指向 EntityType 名稱
+                occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE,
             )
             target_parent.properties.append(new_property)
             has_changes = True
@@ -169,45 +204,53 @@ def add_labels(project_id: str, location: str, processor_id: str, new_labels: Li
     else:
         print("無任何新增變更。")
 
+
 # ==========================================
 # 核心功能: 更新 (Update)
 # ==========================================
 
-def update_labels(project_id: str, location: str, processor_id: str, update_labels: List[Dict[str, str]]):
+
+def update_labels(
+    project_id: str,
+    location: str,
+    processor_id: str,
+    update_labels: List[Dict[str, str]],
+):
     """
     更新現有標籤 (描述、型別) 或移動父層。若標籤不存在，則會跳過。
     """
     client = get_dataset_client(location)
-    schema, root_entity_type = _get_schema_resource(client, project_id, location, processor_id)
+    schema, root_entity_type = _get_schema_resource(
+        client, project_id, location, processor_id
+    )
     if not schema or not root_entity_type:
         return
 
     has_changes = False
-    
+
     for label_info in update_labels:
         label_name = label_info["name"]
         data_type = label_info.get("type", "string")
         parent_name = label_info.get("parent")
         description = label_info.get("description", "")
 
-        # 尋找 EntityType 
-        existing_et = next((et for et in schema.document_schema.entity_types if et.name == label_name), None)
-        
-        # 尋找在哪個 Parent 下 (需要掃描所有 Entity Types 的 properties)
-        current_parent = None
-        current_prop = None
-        
+        # 尋找 EntityType
+        existing_et = next(
+            (et for et in schema.document_schema.entity_types if et.name == label_name),
+            None,
+        )
+
         # 簡單起見，我們先掃描 root 和所有 entity types 找是誰擁有這個 property
         # 注意：一個 property name 理論上在同一層只能出現一次，但在不同 parent 下可能重複？
         # Document AI Schema 通常名為全域唯一 (EntityType Name)，Property Name 則依附於 Parent。
         # 這裡假設 label_name 對應 EntityType Name 或 Property Name。
-        
-        found_locations = [] # (parent_entity, property)
+
+        found_locations = []  # (parent_entity, property)
         for et in schema.document_schema.entity_types:
             for p in et.properties:
                 if p.name == label_name:
                     found_locations.append((et, p))
-        
+
         if not existing_et and not found_locations:
             print(f"   ⚠️ 找不到標籤 '{label_name}'，無法更新 (跳過)。")
             continue
@@ -220,7 +263,7 @@ def update_labels(project_id: str, location: str, processor_id: str, update_labe
                 print(f"      📝 更新描述: {description}")
                 existing_et.description = description
                 has_changes = True
-            
+
             # 檢查 Base Type
             curr_base = existing_et.base_types[0] if existing_et.base_types else ""
             if curr_base != data_type:
@@ -231,43 +274,54 @@ def update_labels(project_id: str, location: str, processor_id: str, update_labe
 
         # 2. 更新 Properties (Type & Description)
         for parent, prop in found_locations:
-             # 如果是 Primitive Property，value_type 是 data_type
-             # 如果是 Entity Reference，value_type 是 label_name (通常)
-             
-             # 判斷這是一個 Reference 還是 Primitive Property
-             # 若 existing_et 存在，則 prop.value_type 應為 label_name
-             # 若 existing_et 不存在，則 prop.value_type 應為 primitive type
-             
-             if not existing_et: 
-                 # Primitive Property: Update Type & Desc
-                 if prop.value_type != data_type:
-                     print(f"      ⚙️ 更新屬性型別 ({parent.name}): {prop.value_type} -> {data_type}")
-                     prop.value_type = data_type
-                     has_changes = True
-                 
-                 if hasattr(prop, "description") and prop.description != description:
-                     prop.description = description
-                     has_changes = True
-        
+            # 如果是 Primitive Property，value_type 是 data_type
+            # 如果是 Entity Reference，value_type 是 label_name (通常)
+
+            # 判斷這是一個 Reference 還是 Primitive Property
+            # 若 existing_et 存在，則 prop.value_type 應為 label_name
+            # 若 existing_et 不存在，則 prop.value_type 應為 primitive type
+
+            if not existing_et:
+                # Primitive Property: Update Type & Desc
+                if prop.value_type != data_type:
+                    print(
+                        f"      ⚙️ 更新屬性型別 ({parent.name}): {prop.value_type} -> {data_type}"
+                    )
+                    prop.value_type = data_type
+                    has_changes = True
+
+                if hasattr(prop, "description") and prop.description != description:
+                    prop.description = description
+                    has_changes = True
+
         # 3. 處理 Parent 移動 (Move)
         # 如果指定了新的 parent，且當前的 parent 不是新的 parent
         if parent_name:
-            new_parent_et = next((et for et in schema.document_schema.entity_types if et.name == parent_name), None)
+            new_parent_et = next(
+                (
+                    et
+                    for et in schema.document_schema.entity_types
+                    if et.name == parent_name
+                ),
+                None,
+            )
             if not new_parent_et:
-                 # 特例：若 parent_name 指向 Root (雖然 Root 也在 entity_types 裡，但通常需要特別找)
-                 pass
-            
+                # 特例：若 parent_name 指向 Root (雖然 Root 也在 entity_types 裡，但通常需要特別找)
+                pass
+
             if new_parent_et:
                 # 檢查目前是否已經在 new_parent 下
-                is_already_child = any(parent.name == parent_name for parent, _ in found_locations)
-                
+                is_already_child = any(
+                    parent.name == parent_name for parent, _ in found_locations
+                )
+
                 if not is_already_child:
                     print(f"      🚚 移動 Parent: -> {parent_name}")
                     # 從舊 Parent 移除
                     for parent, prop in found_locations:
                         print(f"         ✂️ 從舊 Parent ({parent.name}) 移除")
                         parent.properties.remove(prop)
-                    
+
                     # 加入新 Parent
                     # 需區分是 Reference 還是 Primitive
                     if existing_et:
@@ -275,14 +329,14 @@ def update_labels(project_id: str, location: str, processor_id: str, update_labe
                         new_prop = documentai.DocumentSchema.EntityType.Property(
                             name=label_name,
                             value_type=label_name,
-                            occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE
+                            occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE,
                         )
                     else:
                         # Add Primitive
                         new_prop = documentai.DocumentSchema.EntityType.Property(
                             name=label_name,
                             value_type=data_type,
-                            occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE
+                            occurrence_type=documentai.DocumentSchema.EntityType.Property.OccurrenceType.OPTIONAL_ONCE,
                         )
                         if hasattr(new_prop, "description"):
                             new_prop.description = description
@@ -295,26 +349,32 @@ def update_labels(project_id: str, location: str, processor_id: str, update_labe
     else:
         print("無任何更新變更。")
 
+
 # ==========================================
 # 核心功能: 刪除 (Delete)
 # ==========================================
 
-def delete_labels(project_id: str, location: str, processor_id: str, label_names: List[str]):
+
+def delete_labels(
+    project_id: str, location: str, processor_id: str, label_names: List[str]
+):
     """
     刪除標籤。會從所有 Parent 的屬性中移除，並刪除 EntityType 定義。
     """
     client = get_dataset_client(location)
-    schema, root_entity_type = _get_schema_resource(client, project_id, location, processor_id)
+    schema, root_entity_type = _get_schema_resource(
+        client, project_id, location, processor_id
+    )
     if not schema:
         return
 
     has_changes = False
-    
+
     for name_to_delete in label_names:
         print(f"   🗑️ 準備刪除: {name_to_delete}")
-        
+
         deleted_count = 0
-        
+
         # 1. 從所有 Entity Types 的 properties 中移除引用
         for et in schema.document_schema.entity_types:
             props_to_remove = [p for p in et.properties if p.name == name_to_delete]
@@ -323,15 +383,22 @@ def delete_labels(project_id: str, location: str, processor_id: str, label_names
                 et.properties.remove(p)
                 deleted_count += 1
                 has_changes = True
-                
+
         # 2. 移除 EntityType 定義本身 (如果存在)
-        et_to_remove = next((et for et in schema.document_schema.entity_types if et.name == name_to_delete), None)
+        et_to_remove = next(
+            (
+                et
+                for et in schema.document_schema.entity_types
+                if et.name == name_to_delete
+            ),
+            None,
+        )
         if et_to_remove:
             print(f"      ❌ 移除 EntityType 定義: {name_to_delete}")
             schema.document_schema.entity_types.remove(et_to_remove)
             deleted_count += 1
             has_changes = True
-            
+
         if deleted_count == 0:
             print(f"      ⚠️ 未在 Schema 中找到 '{name_to_delete}'，無法刪除。")
 
@@ -339,6 +406,7 @@ def delete_labels(project_id: str, location: str, processor_id: str, label_names
         _commit_schema_update(client, schema)
     else:
         print("無任何刪除變更。")
+
 
 # ==========================================
 # Main Execution
@@ -349,12 +417,17 @@ if __name__ == "__main__":
     PROJECT_ID = os.getenv("PROJECT_ID")
     LOCATION = "us"
     PROCESSOR_ID = os.getenv("PROCESSOR_ID")
-    
+
     print(f"🚀 開始管理 Processor Schema ({PROCESSOR_ID})...")
-    
+
     # 範例 1: 新增
     add_list = [
-        {"name": "pay_date", "type": "string", "description": "繳款日", "parent": "documents"},
+        {
+            "name": "pay_date",
+            "type": "string",
+            "description": "繳款日",
+            "parent": "documents",
+        },
         # {"name": "line_items", "type": "collection", "description": "明細行"}, # Collection Example
     ]
     if add_list:

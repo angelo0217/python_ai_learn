@@ -1,4 +1,3 @@
-
 import os
 from typing import Optional, Sequence
 
@@ -183,8 +182,6 @@ def print_visual_elements(
         print(f"        First math symbol: {repr(first_math_symbol_text)}")
 
 
-
-
 def process_document(
     project_id: str,
     location: str,
@@ -227,8 +224,6 @@ def process_document(
     return result.document
 
 
-
-
 def layout_to_text(layout: documentai.Document.Page.Layout, text: str) -> str:
     """
     Document AI identifies text in different parts of the document by their
@@ -248,19 +243,21 @@ if __name__ == "__main__":
     PROJECT_ID = os.getenv("PROJECT_ID")
     LOCATION = "us"  # 'us' or 'eu'
     # 使用之前 create_process.py 產生的 Processor ID
-    PROCESSOR_ID = os.getenv("PROCESSOR_ID") 
+    PROCESSOR_ID = os.getenv("PROCESSOR_ID")
     PROCESSOR_VERSION = "rc"  # 或使用特定版本 ID
-    
+
     # 請修改為您本地實際存在的 PDF 或圖片檔案路徑
-    # FILE_PATH = "/path/to/your/document.pdf" 
+    # FILE_PATH = "/path/to/your/document.pdf"
     # MIME_TYPE = "application/pdf" # 或 "image/jpeg", "image/png"等
-    FILE_PATH = '/Volumes/Dean512G/gcp/demo.jpg'
+    FILE_PATH = "/Volumes/Dean512G/gcp/demo.jpg"
     MIME_TYPE = "image/jpeg"
-    
+
     # 簡單檢查檔案是否存在，避免直接報錯
     if not os.path.exists(FILE_PATH):
         print(f"錯誤: 找不到檔案 {FILE_PATH}")
-        print("請打開 googel_ai_doc/ocr_process_file.py 修改 FILE_PATH 變數為真實路徑。")
+        print(
+            "請打開 googel_ai_doc/ocr_process_file.py 修改 FILE_PATH 變數為真實路徑。"
+        )
     else:
         process_document_ocr_sample(
             project_id=PROJECT_ID,

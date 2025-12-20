@@ -89,31 +89,36 @@ def process_document_sample(
     # Read the text recognition output from the processor
     print("The document contains the following text:")
     print(document.text)
-    
-    print("\n" + "="*30)
+
+    print("\n" + "=" * 30)
     print("1. [原始] 處理器提取的實體 (Raw Entities):")
-    
+
     print(json.dumps(extract_document_entities(document), ensure_ascii=False, indent=2))
-    print("="*30)
+    print("=" * 30)
+
 
 def extract_document_entities(document: documentai.Document) -> dict:
     """
     遞迴提取 Document Entities，將其轉換為一般 Python Dict。
     自動處理重複的 key (轉為 list) 與巢狀結構。
     """
-    
+
     def _process_entity_list(entities_list) -> dict:
         result = {}
         for entity in entities_list:
             key = entity.type_
-            
+
             # 判斷是否為巢狀實體 (有子屬性)
             if entity.properties:
                 value = _process_entity_list(entity.properties)
             else:
                 # 葉節點，直接取文字與正規化值
-                value = entity.normalized_value.text if entity.normalized_value else entity.mention_text
-            
+                value = (
+                    entity.normalized_value.text
+                    if entity.normalized_value
+                    else entity.mention_text
+                )
+
             # 把 items 加入 result，處理重複 key
             if key in result:
                 if not isinstance(result[key], list):
@@ -126,34 +131,32 @@ def extract_document_entities(document: documentai.Document) -> dict:
     return _process_entity_list(document.entities)
 
 
-def print_processor_schema(
-    project_id: str, location: str, processor_id: str
-) -> None:
+def print_processor_schema(project_id: str, location: str, processor_id: str) -> None:
     """
     查看並列印處理器的 Schema 配置 (Entity Types & Properties)。
     需要使用 v1beta3 API。
     """
     from google.cloud import documentai_v1beta3 as documentai_beta
-    
+
     print(f"\n[Schema Info] 正在讀取 Processor ({processor_id}) 的 Schema...")
-    
+
     opts = ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
     client = documentai_beta.DocumentServiceClient(client_options=opts)
-    
+
     # 建立 Schema Resource Path
     name = client.dataset_schema_path(project_id, location, processor_id)
-    
+
     try:
         schema = client.get_dataset_schema(name=name)
         print(f"Schema Resource Name: {schema.name}")
-        
+
         # document_schema 應該包含 display_name 與 description
         doc_schema = schema.document_schema
         if hasattr(doc_schema, "display_name"):
             print(f"Display Name: {doc_schema.display_name}")
         if hasattr(doc_schema, "description"):
-             print(f"Description: {doc_schema.description}")
-        
+            print(f"Description: {doc_schema.description}")
+
         if not doc_schema.entity_types:
             print("   (目前無定義任何標籤)")
             return
@@ -173,17 +176,19 @@ def print_processor_schema(
                     if prop.description:
                         print(f"      Description: {prop.description}")
             print("")
-            
+
     except Exception as e:
         print(f"❌ 無法讀取 Schema: {e}")
+
+
 # [END documentai_process_document]
 
 if __name__ == "__main__":
     PROJECT_ID = os.getenv("PROJECT_ID")
     LOCATION = "us"
     PROCESSOR_ID = os.getenv("PROCESSOR_ID")
-    
-    FILE_PATH = '/Volumes/Dean512G/gcp/demo.jpg'
+
+    FILE_PATH = "/Volumes/Dean512G/gcp/demo.jpg"
     MIME_TYPE = "image/jpeg"
 
     # 1. 處理文件
@@ -197,7 +202,5 @@ if __name__ == "__main__":
 
     # 2. 查看 Schema (User Request)
     print_processor_schema(
-        project_id=PROJECT_ID,
-        location=LOCATION,
-        processor_id=PROCESSOR_ID
+        project_id=PROJECT_ID, location=LOCATION, processor_id=PROCESSOR_ID
     )
