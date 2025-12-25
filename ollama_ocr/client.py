@@ -22,7 +22,7 @@ class OllamaClient:
         Send a chat request to the Ollama model.
         """
         try:
-            return self.client.chat(
+            return self.client.chat(  # pyright: ignore[reportCallIssue]
                 model=model, messages=messages, format=format, options=options
             )
         except Exception as e:

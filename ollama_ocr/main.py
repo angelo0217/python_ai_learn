@@ -29,6 +29,10 @@ SPEC_FILE_OR_JSON = """{
 OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://localhost:11434")
 
 # 4. 模型設定
+
+# ollama pull llama3.2-vision:11b
+
+# ollama pull llama3.1:8b
 # OCR 視覺模型 (Step 1)
 OCR_MODEL = "qwen3-vl:8b"  # 或 "olmo-3" (需確認支援 Vision)
 # 資料提取 LLM (Step 2)
