@@ -3293,6 +3293,18 @@ wheels = [
 ]
 
 [[package]]
+name = "pdf2image"
+version = "1.17.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/00/d8/b280f01045555dc257b8153c00dee3bc75830f91a744cd5f84ef3a0a64b1/pdf2image-1.17.0.tar.gz", hash = "sha256:eaa959bc116b420dd7ec415fcae49b98100dda3dd18cd2fdfa86d09f112f6d57", size = 12811, upload-time = "2024-01-07T20:33:01.965Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/62/33/61766ae033518957f877ab246f87ca30a85b778ebaad65b7f74fa7e52988/pdf2image-1.17.0-py3-none-any.whl", hash = "sha256:ecdd58d7afb810dffe21ef2b1bbc057ef434dabbac6c33778a38a3f7744a27e2", size = 11618, upload-time = "2024-01-07T20:32:59.957Z" },
+]
+
+[[package]]
 name = "pdfminer-six"
 version = "20251107"
 source = { registry = "https://pypi.org/simple" }
@@ -3941,8 +3953,11 @@ dependencies = [
     { name = "mcp" },
     { name = "mlx-lm" },
     { name = "nest-asyncio" },
+    { name = "ollama" },
     { name = "openai" },
+    { name = "pdf2image" },
     { name = "peft" },
+    { name = "pillow" },
     { name = "pyngrok" },
     { name = "python-dotenv" },
     { name = "redis" },
@@ -3984,8 +3999,11 @@ requires-dist = [
     { name = "mcp", specifier = ">=1.6.0" },
     { name = "mlx-lm", specifier = ">=0.28.4" },
     { name = "nest-asyncio", specifier = ">=1.6.0" },
+    { name = "ollama", specifier = ">=0.6.1" },
     { name = "openai", specifier = ">=1.82.0" },
+    { name = "pdf2image", specifier = ">=1.17.0" },
     { name = "peft", specifier = "==0.17.1" },
+    { name = "pillow", specifier = ">=12.0.0" },
     { name = "pyngrok", specifier = ">=7.2.5" },
     { name = "python-dotenv", specifier = "==1.1.0" },
     { name = "redis", specifier = "==4.6.0" },
