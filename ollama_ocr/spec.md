@@ -13,8 +13,12 @@
 ## 模組架構
 
 ### 1. Configuration
-支援透過環境變數或程式參數設定 Ollama 連線資訊。
-- `OLLAMA_HOST`: Ollama 伺服器位置 (預設 `http://localhost:11434`)
+目前主要透過修改 `main.py` 中的全域變數進行設定：
+- `INPUT_FILE`: 輸入檔案路徑 (PDF 或 圖片)
+- `SPEC_FILE_OR_JSON`: Spec 檔案路徑或 JSON 字串
+- `OLLAMA_HOST`: Ollama 伺服器位置 (預設 `http://localhost:11434`，也可透過環境變數 `OLLAMA_HOST` 設定)
+- `OCR_MODEL`: Step 1 使用的 Vision 模型名稱
+- `EXTRACT_MODEL`: Step 2 使用的提取模型名稱
 
 ### 2. OCR 輸出規格 (Step 1)
 OCR 引擎會回傳圖片的文字描述或原始內容。
@@ -45,15 +49,24 @@ OCR 引擎會回傳圖片的文字描述或原始內容。
 }
 ```
 
-## 推薦模型
-- **Step 1 (Vision/OCR)**: 
-    - `llama3.2-vision`: 具備優秀的圖像理解能力 (推薦)。
-    - `olmo-3`: 使用者指定，需確認是否支援 Vision。若為純文字模型，效果可能受限 (僅能用於 Step 2 或需搭配其他 OCR 工具)。
-    - `moondream`: 輕量級替代方案。
-    - `llava`: 經典開源 Vision 模型。
-- **Step 2 (Extraction)**:
-    - `llama3.1` (8b/70b): 強大的指令遵循與 JSON 輸出能力。
-    - `qwen2.5-coder`: 對於結構化輸出表現優異。
+## 使用模組
+1. 確保 Ollama 服務已啟動且已 Pull 所需模型。
+2. 編輯 `main.py` 中的 `INPUT_FILE` 與 `SPEC_FILE_OR_JSON`。
+3. 執行程式:
+   ```bash
+   python ollama_ocr/main.py
+   ```
 
+## 推薦模型
+- **Step 1 (Vision/OCR)**:
+    - `qwen3-vl:8b` (或 `qwen2.5-vl`): 當前程式碼預設使用，具備優秀的圖像理解與 OCR 能力。
+    - `llama3.2-vision`: 另一強大的視覺模型選擇。
+    - `olmo-3`: 若支援 Vision 可嘗試，否則僅能用於純文字任務。
+- **Step 2 (Extraction)**:
+    - `qwen3:8b`: 當前程式碼預設使用，對於結構化輸出表現優異。
+    - `llama3.1` (8b/70b): 通用性強，指令遵循能力佳。
+    - `qwen2.5-coder`: 針對程式碼與結構化數據優化。
+    
 ## 待辦事項
+- [ ] 驗證 `qwen3` 系列模型在 Ollama 的實際表現與資源需求。
 - [ ] 驗證 `olmo-3` 於 Ollama 的 Vision 支援度。
