@@ -1,3 +1,9 @@
+"""
+用途描述:
+此檔案用於建立 Google Cloud Document AI 的處理器 (Processor)。
+它可以設定處理器的顯示名稱、類型與所在區域 (Location)。
+"""
+
 import os
 
 from google.api_core.client_options import ClientOptions

@@ -1,3 +1,9 @@
+"""
+用途描述:
+此檔案為除錯工具，用於查看並列出指定 Document AI 處理器的資料集 Schema (Entity Types)。
+主要用於快速檢查 Schema 是否正確建立。
+"""
+
 import os
 
 from google.api_core.client_options import ClientOptions

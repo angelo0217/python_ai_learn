@@ -14,6 +14,14 @@
 #
 
 # [START documentai_process_document]
+"""
+用途描述:
+此檔案為基礎範例，展示如何呼叫 Document AI 處理文件。
+主要功能包括：
+1. 提取文件實體 (Entities) 並將結果轉換為乾淨的 JSON 格式。
+2. 查看處理器目前的 Schema 結構。
+"""
+
 import json
 import os
 from typing import Optional

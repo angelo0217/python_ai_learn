@@ -1,3 +1,9 @@
+"""
+用途描述:
+此檔案整合 Document AI OCR 與 Google Gemini 模型，執行非結構化文件的智慧資訊擷取。
+包含「人類反饋 (Human-in-the-Loop)」機制，可將修正後的結果存回資料庫，讓 AI 持續優化擷取準確度。
+"""
+
 import json
 import os
 

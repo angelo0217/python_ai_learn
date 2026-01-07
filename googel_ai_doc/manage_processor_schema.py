@@ -13,6 +13,12 @@
 # limitations under the License.
 #
 
+"""
+用途描述:
+此檔案為 Schema 管理的核心工具，提供完整的程式化介面來新增 (Add)、更新 (Update) 與刪除 (Delete) Document AI 處理器的標籤定義。
+支援處理複雜的 Entity Type 與 Property 關係。
+"""
+
 import os
 from typing import Dict, List
 

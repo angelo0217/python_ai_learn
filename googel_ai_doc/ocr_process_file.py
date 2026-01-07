@@ -1,3 +1,9 @@
+"""
+用途描述:
+此檔案展示如何使用 Document AI 進行標準的 OCR 辨識。
+它會詳細列出並印出文件中的各種佈局資訊，包括區塊 (Blocks)、段落 (Paragraphs)、行 (Lines) 與文字單元 (Tokens)。
+"""
+
 import os
 from typing import Optional, Sequence
 
