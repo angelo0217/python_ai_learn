@@ -146,3 +146,10 @@ def get_greeting(name: str) -> str:
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
+'import json' 
+'from mcp.server.fastmcp import FastMCP' 
+'from typing import Dict, Optional' 
+'default_store: Dict[str, Dict[str, int]] = {' 
+'        The store\'s data if it exists; otherwise, returns None.' 
+'        store_data: Store data (dictionary).' 
+'    return json.dumps({"store_name": store_name, "data": store_data}, ensure_ascii=False)' 
