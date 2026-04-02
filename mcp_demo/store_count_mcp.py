@@ -2,11 +2,9 @@ import copy
 import json
 import logging
 from typing import Any
-
 from mcp.server.fastmcp import FastMCP
 
 logger = logging.getLogger(__name__)
-
 
 # In-memory mock store data (使用 deep copy 保護原始資料)
 default_store = {
@@ -43,4 +41,6 @@ def _format_response(store_name: str, store_dict: dict[str, int]) -> str:
     
     Args:
         store_name: Store 名稱。
-        store_dict: Store 字典.
+        store_dict: Store 字典。
+    """
+    return json.dumps({"store_name": store_name, "data": store_dict})
