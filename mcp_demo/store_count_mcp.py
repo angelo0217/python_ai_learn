@@ -1,53 +1,64 @@
-import copy
-import json
 import logging
 from typing import Any, Optional
-
 from mcp.server.fastmcp import FastMCP
 
-logger = logging.getLogger(__name__)
+# 設定日誌
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("store_count_mcp")
 
-# In-memory mock store data (使用 deep copy 保護原始資料)
-default_store = {
-    "STORE1": {"user_cnt": 18, "manager_cnt": 2},
-    "STORE2": {"user_cnt": 20, "manager_cnt": 0},
-}
+# 初始化 FastMCP 伺服器
+mcp = FastMCP("StoreCountServer")
 
-def get_store_dict(store_name: str) -> Optional[dict[str, int]]:
+# 使用簡單的字典模擬資料庫
+# 在實際生產環境中，這裡應該使用 Redis 或資料庫
+storage = {}
+
+@mcp.tool()
+def update_count(key: str, increment: int = 1) -> str:
     """
-    安全地取得 store 的字典副本。  
+    更新指定項目的計數。
     
     Args:
-        store_name: Store 名稱。  
+        key: 項目名稱 (例如: 'visits', 'clicks')
+        increment: 增加的數值 (預設為 1)
+    """
+    current_value = storage.get(key, 0)
+    new_value = current_value + increment
+    storage[key] = new_value
     
-    Returns:
-        該 store 的字典副本，若不存在則返回 None。
-    """
-    return copy.deepcopy(default_store.get(store_name.upper(), None))
+    logger.info(f"Updated {key}: {current_value} -> {new_value}")
+    return f"項目 '{key}' 已更新。目前總計: {new_value}"
 
-
-def update_store(store_dict: dict[str, int], key: str, delta: int) -> None:
+@mcp.tool()
+def get_count(key: str) -> str:
     """
-    更新 store 字典中的計數。  
-    
-    Args:
-        store_dict: Store 字典（副本）。
-        key: 計數鍵名 ('user_cnt' 或 'manager_cnt')。
-        delta: 增量（正數增加，負數減少）。
-    """
-    if key not in store_dict:
-        logger.error(f"Invalid key: {key}")
-        return
-    store_dict[key] += delta
-
-
-def format_response(store_name: str, store_dict: dict[str, int]) -> str:
-    """
-    格式化回傳回應。  
+    獲取指定項目的目前計數。
     
     Args:
-        store_name: Store 名稱。
-        store_dict: Store 字典。
+        key: 項目名稱
     """
-    # 假設這裡會返回一些格式化的字符串
-    return json.dumps({"store_name": store_name, "data": store_dict})
+    value = storage.get(key, 0)
+    return f"項目 '{key}' 的目前計數為: {value}"
+
+@mcp.tool()
+def reset_count(key: str) -> str:
+    """
+    將指定項目的計數重設為 0。
+    
+    Args:
+        key: 項目名稱
+    """
+    storage[key] = 0
+    return f"項目 '{key}' 已重設為 0。"
+
+@mcp.tool()
+def list_all_counts() -> str:
+    """列出所有項目的計數。"""
+    if not storage:
+        return "目前沒有任何記錄。"
+    
+    results = [f"{k}: {v}" for k, v in storage.items()]
+    return "目前所有計數:\n" + "\n".join(results)
+
+if __name__ == "__main__":
+    mcp.run()
