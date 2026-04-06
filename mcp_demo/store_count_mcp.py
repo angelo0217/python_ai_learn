@@ -1,53 +1,48 @@
-import copy
-import json
 import logging
-from typing import Any, Optional
-
+from typing import Dict, Any
+from pydantic import BaseModel, Field
 from mcp.server.fastmcp import FastMCP
 
+# Logging setup
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# In-memory mock store data (使用 deep copy 保護原始資料)
-default_store = {
-    "STORE1": {"user_cnt": 18, "manager_cnt": 2},
-    "STORE2": {"user_cnt": 20, "manager_cnt": 0},
-}
+# Data Models
+class StoreState(BaseModel):
+    counts: Dict[str, int] = Field(default_factory=lambda: {"visitors": 0, "orders": 0})
 
-def get_store_dict(store_name: str) -> Optional[dict[str, int]]:
+# In-memory state
+state = StoreState()
+
+mcp = FastMCP("store_count_server")
+
+@mcp.tool()
+async def get_store_counts() -> str:
+    """Retrieve the current visitor and order counts for the store."""
+    logger.info("Fetching store counts")
+    return f"Current Store Stats: {state.counts}"
+
+@mcp.tool()
+async def increment_count(metric: str) -> str:
     """
-    安全地取得 store 的字典副本。  
-    
+    Increment a specific store metric.
     Args:
-        store_name: Store 名稱。  
+        metric: The metric to increment ('visitors' or 'orders').
+    """
+    if metric not in state.counts:
+        return f"Error: Metric '{metric}' does not exist. Available: {list(state.counts.keys())}"
     
-    Returns:
-        該 store 的字典副本，若不存在則返回 None。
-    """
-    return copy.deepcopy(default_store.get(store_name.upper(), None))
+    state.counts[metric] += 1
+    logger.info(f"Incremented {metric} to {state.counts[metric]}")
+    return f"Updated {metric}: {state.counts[metric]}"
 
+@mcp.tool()
+async def reset_counts() -> str:
+    """Reset all store counts to zero."""
+    state.counts = {"visitors": 0, "orders": 0}
+    logger.info("Store counts reset")
+    return "All store counts have been reset to 0."
 
-def update_store(store_dict: dict[str, int], key: str, delta: int) -> None:
-    """
-    更新 store 字典中的計數。  
-    
-    Args:
-        store_dict: Store 字典（副本）。
-        key: 計數鍵名 ('user_cnt' 或 'manager_cnt')。
-        delta: 增量（正數增加，負數減少）。
-    """
-    if key not in store_dict:
-        logger.error(f"Invalid key: {key}")
-        return
-    store_dict[key] += delta
-
-
-def format_response(store_name: str, store_dict: dict[str, int]) -> str:
-    """
-    格式化回傳回應。  
-    
-    Args:
-        store_name: Store 名稱。
-        store_dict: Store 字典。
-    """
-    # 假設這裡會返回一些格式化的字符串
-    return json.dumps({"store_name": store_name, "data": store_dict})
+if __name__ == "__main__":
+    # This server uses stdio by default (FastMCP default)
+    mcp.run()
