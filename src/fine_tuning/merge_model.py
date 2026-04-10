@@ -9,8 +9,9 @@ device = "mps" if torch.mps.is_available() else "cpu"
 def main():
     # --- 1. 設定路徑 ---
     base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
-    adapter_path = "./ollama_fine_tuning/qwen-1.5b-local-adapter/final_adapter"
-    merged_model_path = "./ollama_fine_tuning/merged_model" 
+    # 修正路徑：將 ./ollama_fine_tuning/ 改為 ./
+    adapter_path = "./qwen-1.5b-local-adapter/final_adapter"
+    merged_model_path = "./merged_model" 
     
     print(f"--- 準備合併模型 ---")
     print(f"基礎模型: {base_model_id}")
@@ -43,29 +44,17 @@ def main():
     print("模型儲存完畢！")
 
     # --- 5. 輸出 Modelfile ---
-    # --- 5. 輸出 Modelfile ---
     # 使用相對路徑，方便在容器或不同環境中使用
     # 注意：Ollama FROM 指令若指想目錄，該目錄需包含 model.safetensors 與 config.json
-    modelfile_content = f"""
-FROM ./merged_model
-TEMPLATE \"\"\"{{ if .System }}<|im_start|>system
-{{ .System }}<|im_end|>
-{{ end }}{{ if .Prompt }}<|im_start|>user
-{{ .Prompt }}<|im_end|>
-{{ end }}<|im_start|>assistant
-\"\"\"
-PARAMETER stop "<|im_start|>"
-PARAMETER stop "<|im_end|>"
-"""
-    with open("ollama_fine_tuning/Modelfile", "w") as f:
-        f.write(modelfile_content)
-        
-    print("\n--- 下一步：部署到 Ollama ---")
-    print(f"Modelfile 已建立: ollama_fine_tuning/Modelfile")
-    print("請執行以下指令建立模型 (注意 model name 不能有底線)：")
-    print("cd ollama_fine_tuning")
-    print("ollama create dean-model -f Modelfile")
-    print("ollama run dean-model '請問便當加熱規定是？'")
+    modelfile_path = "Modelfile"
+    with open(modelfile_path, "w") as f:
+        f.write(f"FROM {merged_model_path}\n")
+        f.write("TEMPLATE \"\"\"\n{{ .System }}\nUSER: {{ .Prompt }}\nASSISTANT: \"\"\"\n")
+        f.write("PARAMETER stop \"USER: \"\n")
+        f.write("PARAMETER stop \"ASSISTANT: \"\n")
+    
+    print(f"Modelfile 已建立: {modelfile_path}")
+    print(f"請執行: ollama create my-fine-tuned-model -f {modelfile_path}")
 
 if __name__ == "__main__":
     main()
